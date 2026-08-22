@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, DollarSign, Calendar, Tag, AlertCircle, Users, Globe } from 'lucide-react';
+import { X, DollarSign, Calendar, Tag, AlertCircle, Users, Plus, UserPlus } from 'lucide-react';
 
 const CATEGORIES = ['Transportation', 'Accommodation', 'Food', 'Activities', 'Other'];
 const CURRENCIES = [
@@ -12,28 +12,37 @@ const CURRENCIES = [
   { code: 'AUD', symbol: 'A$', name: 'AUD (A$)' },
 ];
 
-export default function ExpenseModal({ isOpen, onClose, onSubmit, initialData = null, travelers = ['You', 'Alex', 'Elena'], loading = false }) {
-  const defaultTravelerList = travelers && travelers.length > 0 ? travelers : ['You', 'Alex', 'Elena'];
+export default function ExpenseModal({ isOpen, onClose, onSubmit, initialData = null, travelers = [], loading = false }) {
+  const [availableTravelers, setAvailableTravelers] = useState(() => {
+    if (travelers && travelers.length > 0) return travelers;
+    return ['You', 'Alex', 'Elena'];
+  });
+
+  const [newTravelerInput, setNewTravelerInput] = useState('');
+  const [showAddInput, setShowAddInput] = useState(false);
 
   const [formData, setFormData] = useState({
     category: 'Transportation',
     amount: '',
     currency: 'USD',
-    paidBy: defaultTravelerList[0],
-    splitAmong: defaultTravelerList,
+    paidBy: 'You',
+    splitAmong: ['You'],
     description: '',
     date: new Date().toISOString().split('T')[0],
   });
   const [error, setError] = useState('');
 
   useEffect(() => {
+    const list = (travelers && travelers.length > 0) ? travelers : ['You', 'Alex', 'Elena'];
+    setAvailableTravelers(list);
+
     if (initialData) {
       setFormData({
         category: initialData.category || 'Transportation',
         amount: initialData.originalAmount || initialData.amount || '',
         currency: initialData.currency || 'USD',
-        paidBy: initialData.paidBy || defaultTravelerList[0],
-        splitAmong: initialData.splitAmong && initialData.splitAmong.length > 0 ? initialData.splitAmong : defaultTravelerList,
+        paidBy: initialData.paidBy || list[0] || 'You',
+        splitAmong: initialData.splitAmong && initialData.splitAmong.length > 0 ? initialData.splitAmong : list,
         description: initialData.description || '',
         date: initialData.date ? new Date(initialData.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
       });
@@ -42,14 +51,14 @@ export default function ExpenseModal({ isOpen, onClose, onSubmit, initialData = 
         category: 'Transportation',
         amount: '',
         currency: 'USD',
-        paidBy: defaultTravelerList[0],
-        splitAmong: defaultTravelerList,
+        paidBy: list[0] || 'You',
+        splitAmong: list,
         description: '',
         date: new Date().toISOString().split('T')[0],
       });
     }
     setError('');
-  }, [initialData, isOpen]);
+  }, [initialData, isOpen, travelers]);
 
   if (!isOpen) return null;
 
@@ -58,10 +67,38 @@ export default function ExpenseModal({ isOpen, onClose, onSubmit, initialData = 
     if (error) setError('');
   };
 
+  const handleAddCustomTraveler = () => {
+    if (!newTravelerInput.trim()) return;
+    const name = newTravelerInput.trim();
+    if (!availableTravelers.includes(name)) {
+      const updated = [...availableTravelers, name];
+      setAvailableTravelers(updated);
+      setFormData((prev) => ({
+        ...prev,
+        splitAmong: [...(prev.splitAmong || []), name],
+      }));
+    }
+    setNewTravelerInput('');
+    setShowAddInput(false);
+  };
+
+  const handleQuickGroupSize = (num) => {
+    let preset = ['You'];
+    if (num === 2) preset = ['You', 'Companion 2'];
+    if (num === 3) preset = ['You', 'Alex', 'Elena'];
+    if (num === 4) preset = ['You', 'Alex', 'Elena', 'Marco'];
+    setAvailableTravelers(preset);
+    setFormData((prev) => ({
+      ...prev,
+      paidBy: preset[0],
+      splitAmong: preset,
+    }));
+  };
+
   const toggleSplitTraveler = (person) => {
     const current = formData.splitAmong || [];
     if (current.includes(person)) {
-      if (current.length === 1) return; // Must have at least 1 person
+      if (current.length === 1) return;
       setFormData({ ...formData, splitAmong: current.filter((p) => p !== person) });
     } else {
       setFormData({ ...formData, splitAmong: [...current, person] });
@@ -176,9 +213,19 @@ export default function ExpenseModal({ isOpen, onClose, onSubmit, initialData = 
 
           {/* Group Expense Splitter Section */}
           <div style={{ background: 'rgba(255, 255, 255, 0.03)', padding: '1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-glass)' }}>
-            <div className="flex items-center gap-2" style={{ marginBottom: '0.75rem' }}>
-              <Users style={{ width: 16, height: 16, color: '#34d399' }} />
-              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#ffffff' }}>Group Trip Expense Splitter</span>
+            <div className="flex justify-between items-center" style={{ marginBottom: '0.75rem' }}>
+              <div className="flex items-center gap-2">
+                <Users style={{ width: 16, height: 16, color: '#34d399' }} />
+                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#ffffff' }}>Group Trip Expense Splitter</span>
+              </div>
+
+              {/* Quick Group Presets */}
+              <div className="flex items-center gap-1">
+                <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>Size:</span>
+                <button type="button" onClick={() => handleQuickGroupSize(2)} className="btn btn-secondary" style={{ padding: '0.15rem 0.4rem', fontSize: '0.7rem' }}>2P</button>
+                <button type="button" onClick={() => handleQuickGroupSize(3)} className="btn btn-secondary" style={{ padding: '0.15rem 0.4rem', fontSize: '0.7rem' }}>3P</button>
+                <button type="button" onClick={() => handleQuickGroupSize(4)} className="btn btn-secondary" style={{ padding: '0.15rem 0.4rem', fontSize: '0.7rem' }}>4P</button>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 grid-cols-2 gap-3" style={{ marginBottom: '0.75rem' }}>
@@ -190,16 +237,26 @@ export default function ExpenseModal({ isOpen, onClose, onSubmit, initialData = 
                   onChange={handleChange}
                   style={{ width: '100%', padding: '0.55rem 0.75rem', backgroundColor: 'rgba(0, 0, 0, 0.4)', border: '1px solid var(--border-glass)', borderRadius: 'var(--radius-sm)', color: '#ffffff', fontSize: '0.85rem', outline: 'none' }}
                 >
-                  {defaultTravelerList.map((person) => (
+                  {availableTravelers.map((person) => (
                     <option key={person} value={person} style={{ backgroundColor: '#111827', color: '#ffffff' }}>{person}</option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Split Equally Among:</label>
+                <div className="flex justify-between items-center" style={{ marginBottom: '0.25rem' }}>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Split Equally Among:</label>
+                  <button
+                    type="button"
+                    onClick={() => setShowAddInput(!showAddInput)}
+                    style={{ background: 'none', border: 'none', color: '#60a5fa', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 600 }}
+                  >
+                    + Add Companion
+                  </button>
+                </div>
+
                 <div className="flex flex-wrap gap-1">
-                  {defaultTravelerList.map((person) => {
+                  {availableTravelers.map((person) => {
                     const isSelected = formData.splitAmong?.includes(person);
                     return (
                       <button
@@ -222,6 +279,26 @@ export default function ExpenseModal({ isOpen, onClose, onSubmit, initialData = 
                     );
                   })}
                 </div>
+
+                {showAddInput && (
+                  <div className="flex items-center gap-1" style={{ marginTop: '0.5rem' }}>
+                    <input
+                      type="text"
+                      value={newTravelerInput}
+                      onChange={(e) => setNewTravelerInput(e.target.value)}
+                      placeholder="Companion Name..."
+                      style={{ padding: '0.3rem 0.5rem', fontSize: '0.78rem', backgroundColor: 'rgba(0, 0, 0, 0.5)', border: '1px solid var(--border-glass)', borderRadius: 'var(--radius-sm)', color: '#ffffff', outline: 'none', width: '120px' }}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddCustomTraveler}
+                      className="btn btn-primary"
+                      style={{ padding: '0.3rem 0.55rem', fontSize: '0.75rem' }}
+                    >
+                      Add
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
