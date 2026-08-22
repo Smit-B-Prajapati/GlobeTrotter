@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getProfileApi, updateProfileApi, deleteAccountApi } from '../services/api';
+import { getProfileApi, updateProfileApi, deleteAccountApi, toggleSavedDestinationApi } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import ConfirmModal from '../components/ConfirmModal';
@@ -98,6 +98,22 @@ export default function ProfileSettings() {
       setError(err.message || 'Failed to save profile changes');
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleRemoveSavedDestination = async (dest) => {
+    try {
+      const res = await toggleSavedDestinationApi({ city: dest.city, country: dest.country });
+      if (res.success) {
+        setProfile((prev) => ({
+          ...prev,
+          savedDestinations: res.savedDestinations || [],
+        }));
+        setSaveFeedback('Saved destination list updated');
+        setTimeout(() => setSaveFeedback(''), 3000);
+      }
+    } catch (err) {
+      console.error('[Remove saved dest error]:', err);
     }
   };
 
@@ -244,7 +260,7 @@ export default function ProfileSettings() {
               {/* 3. SAVED DESTINATIONS SECTION */}
               <section className="glass-card" style={{ padding: '2rem' }}>
                 <div className="flex items-center gap-2" style={{ marginBottom: '1.5rem', paddingBottom: '0.85rem', borderBottom: '1px solid var(--border-glass)' }}>
-                  <Bookmark style={{ width: 22, height: 22, color: '#f59e0b' }} />
+                  <Bookmark style={{ width: 22, height: 22, color: '#f59e0b', fill: '#f59e0b' }} />
                   <h3 style={{ fontSize: '1.3rem', fontWeight: 700 }}>Saved Destinations ({profile.savedDestinations.length})</h3>
                 </div>
 
@@ -252,16 +268,43 @@ export default function ProfileSettings() {
                   <div className="grid grid-cols-1 grid-cols-2 gap-3">
                     {profile.savedDestinations.map((dest, idx) => (
                       <div key={idx} className="glass-card" style={{ padding: '0.85rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255, 255, 255, 0.03)' }}>
-                        <div>
-                          <h4 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>{dest.city}</h4>
-                          <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{dest.country}</span>
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={dest.image || 'https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?auto=format&fit=crop&w=800&q=80'}
+                            alt={dest.city}
+                            style={{ width: 44, height: 44, borderRadius: 'var(--radius-sm)', objectFit: 'cover' }}
+                          />
+                          <div>
+                            <h4 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>{dest.city}</h4>
+                            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{dest.country}</span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => navigate('/plan')}
+                            className="btn btn-primary"
+                            style={{ padding: '0.3rem 0.65rem', fontSize: '0.75rem' }}
+                          >
+                            Plan Trip
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveSavedDestination(dest)}
+                            className="btn"
+                            style={{ background: 'rgba(239, 68, 68, 0.15)', color: '#fca5a5', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '0.3rem 0.55rem', fontSize: '0.75rem' }}
+                            title="Remove from Saved Destinations"
+                          >
+                            <Trash2 style={{ width: 14, height: 14 }} />
+                          </button>
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
                   <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                    No saved destinations yet. Discover and bookmark cities from the City Search tab.
+                    No saved destinations yet. Discover and bookmark cities from the City Search tab on any trip or dashboard!
                   </p>
                 )}
               </section>
