@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, MapPin, Globe, Eye, Edit3, Trash2 } from 'lucide-react';
+import { getCountryCoverPhoto } from '../utils/countryPhotos';
 
 export default function TripCard({ trip, onDeleteRequest }) {
   const formatDate = (dateStr) => {
@@ -12,15 +13,23 @@ export default function TripCard({ trip, onDeleteRequest }) {
     });
   };
 
-  const defaultCover = 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=800&q=80';
+  const defaultCameraCover = 'https://images.unsplash.com/photo-1488646953014-85cb44e25828';
+  
+  const coverImage = (trip.coverPhoto && !trip.coverPhoto.includes(defaultCameraCover))
+    ? trip.coverPhoto
+    : getCountryCoverPhoto(trip.name, trip.destinations);
 
   return (
     <div className="glass-card flex flex-col justify-between" style={{ overflow: 'hidden' }}>
       {/* Cover Image Banner */}
       <div style={{ height: '160px', width: '100%', position: 'relative', overflow: 'hidden' }}>
         <img
-          src={trip.coverPhoto || defaultCover}
+          src={coverImage}
           alt={trip.name}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = getCountryCoverPhoto(trip.name, trip.destinations);
+          }}
           style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'var(--transition-normal)' }}
         />
         <div style={{ position: 'absolute', top: '12px', right: '12px' }}>

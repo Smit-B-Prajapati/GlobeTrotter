@@ -36,6 +36,8 @@ import {
   Lock,
 } from 'lucide-react';
 
+import { getCountryCoverPhoto } from '../utils/countryPhotos';
+
 export default function TripDetails() {
   const { id } = useParams();
   const [trip, setTrip] = useState(null);
@@ -324,8 +326,14 @@ export default function TripDetails() {
               {/* Cover Banner */}
               <div className="glass-card" style={{ height: '320px', width: '100%', position: 'relative', overflow: 'hidden', marginBottom: '2rem' }}>
                 <img
-                  src={trip.coverPhoto || defaultCover}
+                  src={(trip.coverPhoto && !trip.coverPhoto.includes('photo-1488646953014-85cb44e25828'))
+                    ? trip.coverPhoto
+                    : getCountryCoverPhoto(trip.name, stops.map(s => s.city + ' ' + s.country))}
                   alt={trip.name}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = getCountryCoverPhoto(trip.name, stops.map(s => s.city + ' ' + s.country));
+                  }}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
                 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(11, 15, 25, 0.95) 0%, rgba(11, 15, 25, 0.3) 60%, transparent 100%)' }} />
