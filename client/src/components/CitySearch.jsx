@@ -80,6 +80,10 @@ export default function CitySearch({ onSelectCity, tripDates }) {
               <img
                 src={item.image}
                 alt={item.city}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = 'https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?auto=format&fit=crop&w=800&q=80';
+                }}
                 style={{ width: 70, height: 70, borderRadius: 'var(--radius-sm)', objectFit: 'cover', flexShrink: 0 }}
               />
               <div style={{ flex: 1, minWidth: 0 }}>

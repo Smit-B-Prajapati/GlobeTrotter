@@ -30,8 +30,8 @@ export const CITIES_DATASET = [
     region: 'South Asia',
     costIndex: 'Budget',
     popularity: 4.5,
-    image: 'https://images.unsplash.com/photo-1609947017136-9efa23b1945f?auto=format&fit=crop&w=800&q=80',
-    description: 'UNESCO World Heritage city famous for Sabarmati Ashram and intricate stepwells.',
+    image: 'https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?auto=format&fit=crop&w=800&q=80',
+    description: 'UNESCO World Heritage city famous for Sabarmati Riverfront, Ashram, and historic architecture.',
   },
   {
     id: 'city_bangalore',
