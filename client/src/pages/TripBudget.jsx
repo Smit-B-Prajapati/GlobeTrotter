@@ -295,6 +295,84 @@ export default function TripBudget() {
                 <BudgetChart categories={data.categories} totalCost={data.metrics.totalCost} />
               </div>
 
+              {/* Group Trip Expense Splitter ("Who Owes Whom") */}
+              <div className="glass-card" style={{ padding: '1.75rem', marginBottom: '2.5rem' }}>
+                <div className="flex justify-between items-center" style={{ marginBottom: '1.25rem' }}>
+                  <div className="flex items-center gap-2">
+                    <Users style={{ width: 22, height: 22, color: '#34d399' }} />
+                    <div>
+                      <h3 style={{ fontSize: '1.3rem', fontWeight: 700 }}>Group Trip Expense Splitter</h3>
+                      <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                        Track group companion balances and automated settlement matrix ("Who Owes Whom")
+                      </p>
+                    </div>
+                  </div>
+                  <span className="badge badge-success">Group Trip Active</span>
+                </div>
+
+                <div className="grid grid-cols-1 grid-cols-2 gap-6">
+                  
+                  {/* Companion Balances */}
+                  <div style={{ background: 'rgba(255, 255, 255, 0.02)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-glass)' }}>
+                    <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.85rem', color: 'var(--text-primary)' }}>
+                      Traveler Balances
+                    </h4>
+                    <div className="flex flex-col gap-3">
+                      {data.groupSplitter?.groupBalances?.map((bal) => (
+                        <div key={bal.person} className="flex justify-between items-center" style={{ padding: '0.6rem 0.85rem', background: 'rgba(255, 255, 255, 0.03)', borderRadius: 'var(--radius-sm)' }}>
+                          <div>
+                            <span style={{ fontWeight: 700, fontSize: '0.92rem', color: '#ffffff' }}>{bal.person}</span>
+                            <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                              Paid: ${bal.totalPaid} | Share: ${bal.totalShare}
+                            </div>
+                          </div>
+                          <div style={{ textAlign: 'right' }}>
+                            <span style={{ 
+                              fontWeight: 800, 
+                              fontSize: '0.95rem', 
+                              color: bal.netBalance > 0 ? '#34d399' : bal.netBalance < 0 ? '#ef4444' : 'var(--text-secondary)' 
+                            }}>
+                              {bal.netBalance > 0 ? `+$${bal.netBalance}` : bal.netBalance < 0 ? `-$${Math.abs(bal.netBalance)}` : '$0.00'}
+                            </span>
+                            <div style={{ fontSize: '0.72rem', color: bal.netBalance > 0 ? '#34d399' : bal.netBalance < 0 ? '#ef4444' : 'var(--text-muted)' }}>
+                              {bal.netBalance > 0 ? 'Gets back' : bal.netBalance < 0 ? 'Owes group' : 'Settled up'}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Settlement Matrix */}
+                  <div style={{ background: 'rgba(255, 255, 255, 0.02)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-glass)' }}>
+                    <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.85rem', color: 'var(--text-primary)' }}>
+                      Suggested Settlement ("Who Owes Whom")
+                    </h4>
+                    {data.groupSplitter?.settlements && data.groupSplitter.settlements.length > 0 ? (
+                      <div className="flex flex-col gap-3">
+                        {data.groupSplitter.settlements.map((set, idx) => (
+                          <div key={idx} className="flex items-center justify-between" style={{ background: 'rgba(59, 130, 246, 0.1)', padding: '0.75rem 1rem', borderRadius: 'var(--radius-sm)', border: '1px solid rgba(59, 130, 246, 0.3)' }}>
+                            <div className="flex items-center gap-2">
+                              <span style={{ fontWeight: 700, color: '#fca5a5' }}>{set.from}</span>
+                              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>owes</span>
+                              <span style={{ fontWeight: 700, color: '#34d399' }}>{set.to}</span>
+                            </div>
+                            <span style={{ fontWeight: 800, color: '#60a5fa', fontSize: '1rem' }}>
+                              ${set.amount}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div style={{ textAlign: 'center', padding: '1.5rem 0', color: 'var(--text-secondary)', fontSize: '0.88rem' }}>
+                        ✨ Everyone is fully settled up! No pending payments.
+                      </div>
+                    )}
+                  </div>
+
+                </div>
+              </div>
+
               {/* Expense Records Table */}
               <div className="glass-card" style={{ padding: '1.75rem' }}>
                 <div className="flex justify-between items-center" style={{ marginBottom: '1.25rem' }}>
@@ -323,6 +401,7 @@ export default function TripBudget() {
                         <tr style={{ borderBottom: '1px solid var(--border-glass)', color: 'var(--text-secondary)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                           <th style={{ padding: '0.85rem 1rem' }}>Date</th>
                           <th style={{ padding: '0.85rem 1rem' }}>Category</th>
+                          <th style={{ padding: '0.85rem 1rem' }}>Paid By / Split</th>
                           <th style={{ padding: '0.85rem 1rem' }}>Description</th>
                           <th style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>Amount</th>
                           <th style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>Actions</th>
@@ -335,9 +414,20 @@ export default function TripBudget() {
                             <td style={{ padding: '0.85rem 1rem' }}>
                               <span className="badge badge-info">{exp.category}</span>
                             </td>
+                            <td style={{ padding: '0.85rem 1rem', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
+                              <span style={{ fontWeight: 700, color: '#34d399' }}>{exp.paidBy || 'You'}</span>
+                              <div style={{ fontSize: '0.75rem', color: 'var(--text-dimmed)' }}>
+                                Split: {exp.splitAmong && exp.splitAmong.length > 0 ? exp.splitAmong.join(', ') : 'Self'}
+                              </div>
+                            </td>
                             <td style={{ padding: '0.85rem 1rem', color: 'var(--text-secondary)' }}>{exp.description || '—'}</td>
                             <td style={{ padding: '0.85rem 1rem', textAlign: 'right', fontWeight: 700, color: 'var(--text-primary)' }}>
                               ${exp.amount.toLocaleString()}
+                              {exp.currency && exp.currency !== 'USD' && (
+                                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 400 }}>
+                                  ({exp.currency} {exp.originalAmount?.toLocaleString() || exp.amount})
+                                </div>
+                              )}
                             </td>
                             <td style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>
                               <div className="flex justify-end items-center gap-2">
@@ -385,11 +475,12 @@ export default function TripBudget() {
       <ExpenseModal
         isOpen={isExpenseModalOpen}
         onClose={() => {
-          setIsExpenseModalOpen(false);
+          setIsActivityModalOpen && setIsExpenseModalOpen(false);
           setEditingExpense(null);
         }}
         onSubmit={handleExpenseSubmit}
         initialData={editingExpense}
+        travelers={data?.trip?.travelers}
         loading={modalSubmitting}
       />
 

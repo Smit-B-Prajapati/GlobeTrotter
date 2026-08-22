@@ -3,6 +3,16 @@ import Trip from '../models/Trip.js';
 import Expense from '../models/Expense.js';
 import Activity from '../models/Activity.js';
 
+const RATES_TO_USD = {
+  USD: 1.0,
+  EUR: 1.08,
+  GBP: 1.27,
+  JPY: 0.0065,
+  INR: 0.012,
+  CAD: 0.74,
+  AUD: 0.65,
+};
+
 /**
  * Helper to check trip ownership
  */
@@ -20,7 +30,7 @@ const checkTripOwnership = async (tripId, userId) => {
 
 /**
  * @route   GET /api/trips/:tripId/budget
- * @desc    Get complete budget metrics, category breakdown, and expense list
+ * @desc    Get complete budget metrics, category breakdown, group expense splitter, and expense list
  * @access  Private
  */
 export const getBudgetSummary = async (req, res) => {
@@ -70,6 +80,75 @@ export const getBudgetSummary = async (req, res) => {
     const isOverBudget = budgetLimit > 0 && totalCost > budgetLimit;
     const remainingBudget = budgetLimit > 0 ? budgetLimit - totalCost : null;
 
+    // 7. Group Expense Settlement Engine ("Who Owes Whom")
+    const defaultTravelers = (trip.travelers && trip.travelers.length > 0)
+      ? trip.travelers
+      : ['You'];
+
+    const travelerPaid = {};
+    const travelerShare = {};
+
+    defaultTravelers.forEach((t) => {
+      travelerPaid[t] = 0;
+      travelerShare[t] = 0;
+    });
+
+    expenses.forEach((exp) => {
+      const payer = exp.paidBy || 'You';
+      const splits = (exp.splitAmong && exp.splitAmong.length > 0) ? exp.splitAmong : [payer];
+      const costInUSD = exp.amount;
+
+      if (travelerPaid[payer] === undefined) travelerPaid[payer] = 0;
+      travelerPaid[payer] += costInUSD;
+
+      const sharePerPerson = costInUSD / splits.length;
+      splits.forEach((person) => {
+        if (travelerShare[person] === undefined) travelerShare[person] = 0;
+        travelerShare[person] += sharePerPerson;
+      });
+    });
+
+    const groupBalances = [];
+    const debtors = [];
+    const creditors = [];
+
+    const allPeople = Array.from(new Set([...Object.keys(travelerPaid), ...Object.keys(travelerShare)]));
+    allPeople.forEach((person) => {
+      const paid = travelerPaid[person] || 0;
+      const share = travelerShare[person] || 0;
+      const net = paid - share;
+      groupBalances.push({
+        person,
+        totalPaid: parseFloat(paid.toFixed(2)),
+        totalShare: parseFloat(share.toFixed(2)),
+        netBalance: parseFloat(net.toFixed(2)),
+      });
+
+      if (net < -0.01) debtors.push({ person, owes: -net });
+      if (net > 0.01) creditors.push({ person, gets: net });
+    });
+
+    const settlements = [];
+    let dIdx = 0;
+    let cIdx = 0;
+    while (dIdx < debtors.length && cIdx < creditors.length) {
+      const debtor = debtors[dIdx];
+      const creditor = creditors[cIdx];
+      const amount = Math.min(debtor.owes, creditor.gets);
+
+      settlements.push({
+        from: debtor.person,
+        to: creditor.person,
+        amount: parseFloat(amount.toFixed(2)),
+      });
+
+      debtor.owes -= amount;
+      creditor.gets -= amount;
+
+      if (debtor.owes <= 0.01) dIdx++;
+      if (creditor.gets <= 0.01) cIdx++;
+    }
+
     res.status(200).json({
       success: true,
       trip: {
@@ -78,6 +157,7 @@ export const getBudgetSummary = async (req, res) => {
         startDate: trip.startDate,
         endDate: trip.endDate,
         budgetLimit,
+        travelers: defaultTravelers,
       },
       metrics: {
         totalCost,
@@ -89,6 +169,11 @@ export const getBudgetSummary = async (req, res) => {
         exceededAmount: isOverBudget ? totalCost - budgetLimit : 0,
       },
       categories,
+      groupSplitter: {
+        travelers: defaultTravelers,
+        groupBalances,
+        settlements,
+      },
       expenses,
     });
   } catch (error) {
@@ -102,13 +187,13 @@ export const getBudgetSummary = async (req, res) => {
 
 /**
  * @route   POST /api/trips/:tripId/expenses
- * @desc    Add a new expense item to trip
+ * @desc    Add a new expense item to trip with multi-currency support and splitting
  * @access  Private
  */
 export const addExpense = async (req, res) => {
   try {
     const { tripId } = req.params;
-    const { category, amount, description, date } = req.body;
+    const { category, amount, description, date, currency = 'USD', paidBy = 'You', splitAmong = [] } = req.body;
 
     const { error, status } = await checkTripOwnership(tripId, req.user._id);
     if (error) return res.status(status).json({ success: false, message: error });
@@ -135,10 +220,17 @@ export const addExpense = async (req, res) => {
       });
     }
 
+    const rate = RATES_TO_USD[currency] || 1.0;
+    const amountInUSD = Number(amount) * rate;
+
     const expense = await Expense.create({
       trip: tripId,
       category,
-      amount: Number(amount),
+      amount: amountInUSD,
+      originalAmount: Number(amount),
+      currency,
+      paidBy: paidBy || 'You',
+      splitAmong: splitAmong.length > 0 ? splitAmong : [paidBy || 'You'],
       description: description ? description.trim() : '',
       date: expenseDate,
     });
@@ -178,10 +270,20 @@ export const updateExpense = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Expense record not found' });
     }
 
-    const { category, amount, description, date } = req.body;
+    const { category, amount, description, date, currency, paidBy, splitAmong } = req.body;
 
     if (category) expense.category = category;
-    if (amount !== undefined) expense.amount = Number(amount);
+    if (currency) expense.currency = currency;
+    if (paidBy) expense.paidBy = paidBy;
+    if (splitAmong && Array.isArray(splitAmong)) expense.splitAmong = splitAmong;
+
+    if (amount !== undefined) {
+      const curr = currency || expense.currency || 'USD';
+      const rate = RATES_TO_USD[curr] || 1.0;
+      expense.originalAmount = Number(amount);
+      expense.amount = Number(amount) * rate;
+    }
+
     if (description !== undefined) expense.description = description.trim();
     if (date) {
       const parsedDate = new Date(date);

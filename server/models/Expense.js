@@ -27,6 +27,21 @@ const expenseSchema = new mongoose.Schema(
       required: [true, 'Please specify the expense amount'],
       min: [0, 'Expense amount cannot be negative'],
     },
+    currency: {
+      type: String,
+      default: 'USD',
+    },
+    originalAmount: {
+      type: Number,
+    },
+    paidBy: {
+      type: String,
+      default: 'You',
+    },
+    splitAmong: {
+      type: [String],
+      default: [],
+    },
     description: {
       type: String,
       trim: true,

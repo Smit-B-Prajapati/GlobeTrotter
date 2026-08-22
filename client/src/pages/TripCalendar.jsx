@@ -202,7 +202,7 @@ export default function TripCalendar() {
               style={{ padding: '0.65rem 1.25rem' }}
             >
               <Plus style={{ width: 18, height: 18 }} />
-              <span>+ Add Activity</span>
+              <span>Add Activity</span>
             </button>
           </div>
 
@@ -228,10 +228,10 @@ export default function TripCalendar() {
               <p style={{ fontFamily: 'var(--font-heading)' }}>Loading visual calendar...</p>
             </div>
           ) : itinerary ? (
-            <div className="grid grid-cols-1 grid-cols-12 gap-6">
+            <div className="calendar-responsive-grid">
 
               {/* Left Column: Interactive Calendar Grid */}
-              <div className="col-span-12 col-span-md-7">
+              <div>
                 <CalendarGrid
                   days={itinerary.days || []}
                   selectedDate={selectedDate}
@@ -242,8 +242,8 @@ export default function TripCalendar() {
               </div>
 
               {/* Right Column: Selected Day Vertical Timeline Stream */}
-              <div className="col-span-12 col-span-md-5">
-                <div className="glass-card" style={{ padding: '1.75rem', height: '100%', display: 'flex', flexDirection: 'column' }}>
+              <div>
+                <div className="glass-card" style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column' }}>
                   
                   {/* Selected Day Header & Day Navigation */}
                   <div className="flex justify-between items-center" style={{ paddingBottom: '1rem', borderBottom: '1px solid var(--border-glass)', marginBottom: '1.5rem' }}>

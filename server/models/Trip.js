@@ -37,6 +37,14 @@ const tripSchema = new mongoose.Schema(
       default: 0,
       min: [0, 'Budget limit cannot be negative'],
     },
+    currency: {
+      type: String,
+      default: 'USD',
+    },
+    travelers: {
+      type: [String],
+      default: [],
+    },
     coverPhoto: {
       type: String,
       default: '',
