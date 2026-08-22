@@ -57,7 +57,7 @@ export default function StopList({ stops = [], onReorder, onEditStop, onDeleteSt
           style={{ padding: '0.45rem 0.95rem', fontSize: '0.85rem' }}
         >
           <Plus style={{ width: 14, height: 14 }} />
-          <span>+ Add Stop</span>
+          <span>Add Stop</span>
         </button>
       </div>
 
@@ -158,7 +158,7 @@ export default function StopList({ stops = [], onReorder, onEditStop, onDeleteSt
           <MapPin style={{ width: 36, height: 36, color: 'var(--text-dimmed)', margin: '0 auto 0.75rem auto' }} />
           <h4 style={{ fontSize: '1.1rem', color: 'var(--text-primary)', marginBottom: '0.35rem' }}>No travel stops added yet</h4>
           <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-            Search cities below or click "+ Add Stop" to start constructing your multi-city route.
+            Search cities below or click "Add Stop" to start constructing your multi-city route.
           </p>
         </div>
       )}

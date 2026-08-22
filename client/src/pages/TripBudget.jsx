@@ -185,7 +185,7 @@ export default function TripBudget() {
               style={{ padding: '0.65rem 1.25rem' }}
             >
               <Plus style={{ width: 18, height: 18 }} />
-              <span>+ Record Expense</span>
+              <span>Record Expense</span>
             </button>
           </div>
 

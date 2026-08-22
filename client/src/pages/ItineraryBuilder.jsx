@@ -203,7 +203,7 @@ export default function ItineraryBuilder() {
                 style={{ padding: '0.65rem 1.1rem' }}
               >
                 <Plus style={{ width: 16, height: 16 }} />
-                <span>+ Add Activity</span>
+                <span>Add Activity</span>
               </button>
             </div>
           </div>
@@ -330,7 +330,7 @@ export default function ItineraryBuilder() {
                           </div>
                         ) : (
                           <div style={{ padding: '1.5rem 0', textAlign: 'center', color: 'var(--text-dimmed)', fontSize: '0.9rem' }}>
-                            No activities planned for Day {day.dayNumber}. Click "+ Add Activity" to schedule.
+                            No activities planned for Day {day.dayNumber}. Click "Add Activity" to schedule.
                           </div>
                         )}
 

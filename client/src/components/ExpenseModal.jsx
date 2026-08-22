@@ -251,7 +251,7 @@ export default function ExpenseModal({ isOpen, onClose, onSubmit, initialData = 
                     onClick={() => setShowAddInput(!showAddInput)}
                     style={{ background: 'none', border: 'none', color: '#60a5fa', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 600 }}
                   >
-                    + Add Companion
+                    Add Companion
                   </button>
                 </div>
 

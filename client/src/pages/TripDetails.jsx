@@ -423,7 +423,7 @@ export default function TripDetails() {
                       style={{ padding: '0.45rem 0.95rem', fontSize: '0.85rem' }}
                     >
                       <Plus style={{ width: 14, height: 14 }} />
-                      <span>+ Custom Activity</span>
+                      <span>Custom Activity</span>
                     </button>
                   </div>
 
@@ -442,7 +442,7 @@ export default function TripDetails() {
                       <Tag style={{ width: 36, height: 36, color: 'var(--text-dimmed)', margin: '0 auto 0.75rem auto' }} />
                       <h4 style={{ fontSize: '1.05rem', color: 'var(--text-primary)', marginBottom: '0.35rem' }}>No activities scheduled yet</h4>
                       <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                        Discover activities below or click "+ Custom Activity" to add sightseeing tours, food walks, and adventures.
+                        Discover activities below or click "Custom Activity" to add sightseeing tours, food walks, and adventures.
                       </p>
                     </div>
                   )}
