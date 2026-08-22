@@ -27,6 +27,7 @@ export default function ActivityModal({ isOpen, onClose, onSubmit, stops = [], i
         time: initialData.time || '09:00',
         duration: initialData.duration || 60,
         cost: initialData.cost || 0,
+        image: initialData.image || '',
       });
     } else {
       const firstStop = stops[0];
@@ -39,6 +40,7 @@ export default function ActivityModal({ isOpen, onClose, onSubmit, stops = [], i
         time: '09:00',
         duration: 60,
         cost: 0,
+        image: '',
       });
     }
     setError('');

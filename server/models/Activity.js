@@ -67,6 +67,10 @@ const activitySchema = new mongoose.Schema(
       default: 0,
       min: [0, 'Cost cannot be negative'],
     },
+    image: {
+      type: String,
+      default: '',
+    },
   },
   {
     timestamps: true,

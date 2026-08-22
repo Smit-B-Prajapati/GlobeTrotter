@@ -255,6 +255,25 @@ export const getActivityCatalog = async (req, res) => {
   }
 };
 
+const CATEGORY_DEFAULT_IMAGES = {
+  Food: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
+  'Food & Dining': 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
+  Dining: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
+  Sightseeing: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&w=800&q=80',
+  Nature: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80',
+  Culture: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=800&q=80',
+  Cultural: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=800&q=80',
+  Shopping: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=800&q=80',
+  Adventure: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=800&q=80',
+  Nightlife: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=800&q=80',
+  Relaxation: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80',
+};
+
+export const getCategoryDefaultImage = (cat) => {
+  if (!cat) return CATEGORY_DEFAULT_IMAGES.Sightseeing;
+  return CATEGORY_DEFAULT_IMAGES[cat] || CATEGORY_DEFAULT_IMAGES.Sightseeing;
+};
+
 /**
  * Helper to verify trip ownership for authenticated user
  */
@@ -275,7 +294,7 @@ const checkTripOwnership = async (tripId, userId) => {
 export const addActivityToStop = async (req, res) => {
   try {
     const { tripId, stopId } = req.params;
-    const { name, description, category, date, time, duration, cost } = req.body;
+    const { name, description, category, date, time, duration, cost, image } = req.body;
 
     // 1. Ownership check
     const { error, status } = await checkTripOwnership(tripId, req.user._id);
@@ -313,17 +332,21 @@ export const addActivityToStop = async (req, res) => {
       });
     }
 
+    const cat = category || 'Sightseeing';
+    const finalImage = image && image.trim() ? image.trim() : getCategoryDefaultImage(cat);
+
     // 4. Create Activity
     const activity = await Activity.create({
       trip: tripId,
       stop: stopId,
       name: name.trim(),
       description: description ? description.trim() : '',
-      category: category || 'Sightseeing',
+      category: cat,
       date: activityDate,
       time: time || '09:00',
       duration: Number(duration) || 60,
       cost: Number(cost) || 0,
+      image: finalImage,
     });
 
     res.status(201).json({

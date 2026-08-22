@@ -1,6 +1,25 @@
 import React from 'react';
 import { Clock, DollarSign, Plus, Trash2, Tag, Compass } from 'lucide-react';
 
+const CATEGORY_FALLBACK_IMAGES = {
+  Food: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
+  'Food & Dining': 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
+  Dining: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
+  Sightseeing: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&w=800&q=80',
+  Nature: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80',
+  Culture: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=800&q=80',
+  Cultural: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=800&q=80',
+  Shopping: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=800&q=80',
+  Adventure: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=800&q=80',
+  Nightlife: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=800&q=80',
+  Relaxation: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80',
+};
+
+const getCategoryFallbackImage = (cat) => {
+  if (!cat) return CATEGORY_FALLBACK_IMAGES.Sightseeing;
+  return CATEGORY_FALLBACK_IMAGES[cat] || CATEGORY_FALLBACK_IMAGES.Sightseeing;
+};
+
 export default function ActivityCard({ activity, onAddClick, onDeleteClick, isAdded = false }) {
   const formatDuration = (mins) => {
     if (!mins) return '60 mins';
@@ -22,15 +41,21 @@ export default function ActivityCard({ activity, onAddClick, onDeleteClick, isAd
     }
   };
 
-  const defaultImage = 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=800&q=80';
+  const displayImage = activity.image && activity.image.trim()
+    ? activity.image
+    : getCategoryFallbackImage(activity.category);
 
   return (
     <div className="glass-card flex flex-col justify-between" style={{ overflow: 'hidden' }}>
       {/* Banner Image */}
       <div style={{ height: '140px', width: '100%', position: 'relative', overflow: 'hidden' }}>
         <img
-          src={activity.image || defaultImage}
+          src={displayImage}
           alt={activity.name}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = getCategoryFallbackImage(activity.category);
+          }}
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
         <div style={{ position: 'absolute', top: '10px', left: '10px' }}>
