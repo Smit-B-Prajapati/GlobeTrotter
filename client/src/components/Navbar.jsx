@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Globe, Map, PlusCircle, User, Server, LogOut, LogIn, UserPlus } from 'lucide-react';
+import { Globe, Map, PlusCircle, User, Server, LogOut, LogIn, UserPlus, Shield } from 'lucide-react';
 
 export default function Navbar({ apiStatus }) {
   const location = useLocation();
@@ -13,6 +13,7 @@ export default function Navbar({ apiStatus }) {
     { name: 'My Trips', path: '/trips', icon: Map },
     { name: 'Plan Trip', path: '/plan', icon: PlusCircle },
     { name: 'Profile', path: '/profile', icon: User },
+    { name: 'Admin Control', path: '/admin', icon: Shield },
   ];
 
   return (
