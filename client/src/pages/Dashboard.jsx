@@ -35,12 +35,39 @@ export default function Dashboard() {
     fetchDashboard();
   }, []);
 
+  const [activeFilter, setActiveFilter] = useState('all');
+
+  const handleSelectFilter = (filterType) => {
+    if (filterType === 'expenses') {
+      if (data?.recentTrips && data.recentTrips.length > 0) {
+        navigate(`/trips/${data.recentTrips[0]._id}/budget`);
+      } else {
+        navigate('/plan');
+      }
+      return;
+    }
+    setActiveFilter(filterType);
+  };
+
   const handlePlanTripClick = (destination) => {
     if (destination && destination.city) {
       navigate('/plan', { state: { initialName: `Trip to ${destination.city}, ${destination.country}` } });
     } else {
       navigate('/plan');
     }
+  };
+
+  const getFilteredTrips = () => {
+    if (!data?.recentTrips) return [];
+    if (activeFilter === 'upcoming') {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return data.recentTrips.filter((t) => {
+        const end = t.endDate ? new Date(t.endDate) : new Date(t.startDate);
+        return end >= today;
+      });
+    }
+    return data.recentTrips;
   };
 
   return (
@@ -72,7 +99,7 @@ export default function Dashboard() {
                 style={{ padding: '0.85rem 1.75rem', fontSize: '1.05rem', boxShadow: '0 4px 20px rgba(37, 99, 235, 0.4)' }}
               >
                 <Plus style={{ width: 20, height: 20 }} />
-                <span>+ Plan New Trip</span>
+                <span>Plan New Trip</span>
               </button>
             </div>
           </div>
@@ -99,20 +126,47 @@ export default function Dashboard() {
           ) : (
             <>
               {/* Budget Highlights */}
-              <BudgetHighlightCard stats={data?.stats} />
+              <BudgetHighlightCard
+                stats={data?.stats}
+                activeFilter={activeFilter}
+                onSelectFilter={handleSelectFilter}
+              />
 
               {/* Recent / Upcoming Trips Section */}
               <section style={{ marginBottom: '3.5rem' }}>
                 <div className="flex justify-between items-center" style={{ marginBottom: '1.5rem' }}>
                   <div>
-                    <h2 style={{ fontSize: '1.6rem', fontWeight: 700 }}>Your Travel Trips</h2>
-                    <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Trips created and managed by you</p>
+                    <div className="flex items-center gap-2">
+                      <h2 style={{ fontSize: '1.6rem', fontWeight: 700 }}>
+                        {activeFilter === 'upcoming' ? 'Upcoming Journeys' : 'Your Travel Trips'}
+                      </h2>
+                      {activeFilter === 'upcoming' && (
+                        <span className="badge badge-success" style={{ fontSize: '0.8rem' }}>
+                          Filtered ({getFilteredTrips().length})
+                        </span>
+                      )}
+                    </div>
+                    <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                      {activeFilter === 'upcoming'
+                        ? 'Showing active and future travel itineraries'
+                        : 'Trips created and managed by you'}
+                    </p>
                   </div>
+
+                  {activeFilter === 'upcoming' && (
+                    <button
+                      onClick={() => setActiveFilter('all')}
+                      className="btn btn-secondary"
+                      style={{ padding: '0.4rem 0.85rem', fontSize: '0.85rem' }}
+                    >
+                      Show All Trips
+                    </button>
+                  )}
                 </div>
 
-                {data?.recentTrips && data.recentTrips.length > 0 ? (
+                {getFilteredTrips().length > 0 ? (
                   <div className="grid grid-cols-1 grid-cols-2 grid-cols-3 gap-6">
-                    {data.recentTrips.map((trip) => (
+                    {getFilteredTrips().map((trip) => (
                       <TripCard key={trip._id} trip={trip} />
                     ))}
                   </div>
@@ -123,19 +177,30 @@ export default function Dashboard() {
                       <MapPin style={{ width: 32, height: 32, color: '#60a5fa' }} />
                     </div>
                     <h3 style={{ fontSize: '1.4rem', marginBottom: '0.75rem', color: 'var(--text-primary)' }}>
-                      You haven't planned any trips yet.
+                      {activeFilter === 'upcoming' ? 'No upcoming journeys found' : "You haven't planned any trips yet."}
                     </h3>
                     <p style={{ fontSize: '1rem', color: 'var(--text-secondary)', marginBottom: '2rem' }}>
-                      Start planning your next adventure.
+                      {activeFilter === 'upcoming' ? 'Plan your next journey or view all your created trips.' : 'Start planning your next adventure.'}
                     </p>
-                    <button 
-                      onClick={handlePlanTripClick}
-                      className="btn btn-primary" 
-                      style={{ padding: '0.85rem 1.75rem' }}
-                    >
-                      <Plus style={{ width: 18, height: 18 }} />
-                      <span>Plan New Trip</span>
-                    </button>
+                    <div className="flex justify-center gap-3">
+                      {activeFilter === 'upcoming' && (
+                        <button
+                          onClick={() => setActiveFilter('all')}
+                          className="btn btn-secondary"
+                          style={{ padding: '0.85rem 1.5rem' }}
+                        >
+                          View All Trips
+                        </button>
+                      )}
+                      <button
+                        onClick={handlePlanTripClick}
+                        className="btn btn-primary"
+                        style={{ padding: '0.85rem 1.75rem' }}
+                      >
+                        <Plus style={{ width: 18, height: 18 }} />
+                        <span>Plan New Trip</span>
+                      </button>
+                    </div>
                   </div>
                 )}
               </section>

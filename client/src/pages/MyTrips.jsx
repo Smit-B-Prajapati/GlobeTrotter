@@ -96,7 +96,7 @@ export default function MyTrips() {
               style={{ padding: '0.85rem 1.75rem', fontSize: '1.05rem' }}
             >
               <Plus style={{ width: 20, height: 20 }} />
-              <span>+ Plan New Trip</span>
+              <span>Plan New Trip</span>
             </Link>
           </div>
 

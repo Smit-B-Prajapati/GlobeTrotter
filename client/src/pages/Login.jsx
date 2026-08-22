@@ -72,9 +72,20 @@ export default function Login() {
 
         {/* Right Side: Form Card */}
         <div className="glass-card" style={{ padding: '2.5rem' }}>
-          <div style={{ marginBottom: '2rem' }}>
-            <h3 style={{ fontSize: '1.6rem', marginBottom: '0.5rem' }}>Account Sign In</h3>
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Enter your email credentials to access your trips</p>
+          <div className="flex justify-between items-start" style={{ marginBottom: '2rem' }}>
+            <div>
+              <h3 style={{ fontSize: '1.6rem', marginBottom: '0.5rem' }}>Account Sign In</h3>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Enter your email credentials to access your trips</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setFormData({ email: 'smit200610@gmail.com', password: 'password123' })}
+              className="btn btn-secondary"
+              style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem', flexShrink: 0 }}
+              title="Click to pre-fill demo account credentials"
+            >
+              ⚡ Demo Login
+            </button>
           </div>
 
           {localError && (
