@@ -5,6 +5,7 @@ import { Globe, Mail, Lock, LogIn, AlertCircle, Compass, ArrowRight } from 'luci
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
+  const [rememberMe, setRememberMe] = useState(true);
   const [localError, setLocalError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -13,6 +14,14 @@ export default function Login() {
   const location = useLocation();
 
   const from = location.state?.from?.pathname || '/';
+
+  React.useEffect(() => {
+    const savedEmail = localStorage.getItem('globetrotter_saved_email') || 'smit200610@gmail.com';
+    const savedPass = localStorage.getItem('globetrotter_saved_password') || 'password123';
+    if (savedEmail) {
+      setFormData({ email: savedEmail, password: savedPass });
+    }
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -26,6 +35,14 @@ export default function Login() {
     if (!formData.email || !formData.password) {
       setLocalError('Please enter both email address and password');
       return;
+    }
+
+    if (rememberMe) {
+      localStorage.setItem('globetrotter_saved_email', formData.email);
+      localStorage.setItem('globetrotter_saved_password', formData.password);
+    } else {
+      localStorage.removeItem('globetrotter_saved_email');
+      localStorage.removeItem('globetrotter_saved_password');
     }
 
     setSubmitting(true);
@@ -129,6 +146,20 @@ export default function Login() {
                   required
                 />
               </div>
+            </div>
+
+            {/* Remember Me Checkbox */}
+            <div className="flex items-center gap-2" style={{ marginTop: '0.2rem' }}>
+              <input
+                type="checkbox"
+                id="rememberMe"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                style={{ width: '16px', height: '16px', accentColor: '#3b82f6', cursor: 'pointer' }}
+              />
+              <label htmlFor="rememberMe" style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+                Remember email & password on this device
+              </label>
             </div>
 
             <button type="submit" className="btn btn-primary" style={{ marginTop: '0.5rem', width: '100%', padding: '0.85rem' }} disabled={submitting}>
