@@ -24,6 +24,7 @@ import {
   AlertCircle,
   CheckCircle2,
   PieChart,
+  Users,
 } from 'lucide-react';
 
 export default function TripBudget() {
@@ -475,7 +476,7 @@ export default function TripBudget() {
       <ExpenseModal
         isOpen={isExpenseModalOpen}
         onClose={() => {
-          setIsActivityModalOpen && setIsExpenseModalOpen(false);
+          setIsExpenseModalOpen(false);
           setEditingExpense(null);
         }}
         onSubmit={handleExpenseSubmit}
