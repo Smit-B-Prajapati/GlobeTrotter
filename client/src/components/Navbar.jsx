@@ -1,11 +1,13 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Globe, Map, PlusCircle, User, Server, LogOut, LogIn, UserPlus, Shield } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
+import { Globe, Map, PlusCircle, User, Server, LogOut, LogIn, UserPlus, Shield, Sun, Moon } from 'lucide-react';
 
 export default function Navbar({ apiStatus }) {
   const location = useLocation();
   const { user, isAuthenticated, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const status = apiStatus || { loading: false, online: true };
 
   const navLinks = [
@@ -51,8 +53,22 @@ export default function Navbar({ apiStatus }) {
           })}
         </nav>
 
-        {/* Authentication Controls & Status Badge */}
-        <div className="flex items-center gap-4">
+        {/* Authentication Controls, Theme Toggle & Status Badge */}
+        <div className="flex items-center gap-3">
+          {/* Theme Toggle Button */}
+          <button
+            onClick={toggleTheme}
+            className="btn btn-secondary"
+            style={{ padding: '0.45rem', borderRadius: '50%', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            title={theme === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          >
+            {theme === 'dark' ? (
+              <Sun style={{ width: 18, height: 18, color: '#f59e0b' }} />
+            ) : (
+              <Moon style={{ width: 18, height: 18, color: '#2563eb' }} />
+            )}
+          </button>
+
           <div className={`badge ${status.online ? 'badge-success' : 'badge-info'}`}>
             <Server style={{ width: 14, height: 14 }} />
             {status.loading ? 'Connecting...' : status.online ? 'API Online' : 'API Offline'}
@@ -60,8 +76,8 @@ export default function Navbar({ apiStatus }) {
 
           {isAuthenticated ? (
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2" style={{ background: 'rgba(255, 255, 255, 0.06)', padding: '0.35rem 0.75rem', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-glass)' }}>
-                <div style={{ width: 26, height: 26, borderRadius: '50%', backgroundColor: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '0.85rem' }}>
+              <div className="flex items-center gap-2" style={{ background: 'var(--btn-secondary-bg)', padding: '0.35rem 0.75rem', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-glass)' }}>
+                <div style={{ width: 26, height: 26, borderRadius: '50%', backgroundColor: '#2563eb', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '0.85rem' }}>
                   {user?.name?.charAt(0).toUpperCase() || 'U'}
                 </div>
                 <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>{user?.name?.split(' ')[0]}</span>

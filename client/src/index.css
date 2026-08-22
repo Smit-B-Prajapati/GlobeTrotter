@@ -1,9 +1,10 @@
 /* ==========================================================================
-   GlobeTrotter Master Design System & Vanilla CSS Theme
+   GlobeTrotter Master Design System & Dynamic Light/Dark Theme Engine
    Visual Direction: Premium, Clean, Modern, Travel-Focused, Glassmorphism Accent
    ========================================================================== */
 
-:root {
+/* Dark Theme Mode (Default App Appearance) */
+:root, [data-theme="dark"] {
   /* Core Brand Colors */
   --primary-hue: 215;
   --primary-50: #eff6ff;
@@ -20,7 +21,7 @@
   --accent-amber: #f59e0b;
   --accent-indigo: #6366f1;
 
-  /* Neutral Dark Palette (Sleek Dark Mode Aesthetics) */
+  /* Neutral Dark Palette */
   --bg-dark: #0b0f19;
   --bg-card: #111827;
   --bg-card-hover: #1f2937;
@@ -28,14 +29,10 @@
   --border-glass: rgba(255, 255, 255, 0.08);
   --border-glow: rgba(37, 99, 235, 0.3);
 
-  /* Light Theme / Neutral Light Colors */
-  --bg-light: #f8fafc;
-  --bg-surface: #ffffff;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --text-light: #94a3b8;
+  --btn-secondary-bg: rgba(255, 255, 255, 0.08);
+  --btn-secondary-hover: rgba(255, 255, 255, 0.15);
 
-  /* Dark Theme Text Colors (Default App Theme) */
+  /* Dark Theme Text Colors */
   --text-primary: #f8fafc;
   --text-secondary: #cbd5e1;
   --text-dimmed: #64748b;
@@ -61,6 +58,27 @@
   --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Light Theme Mode (Crisp, High-Contrast Slate & Sky Blue Theme) */
+[data-theme="light"] {
+  --bg-dark: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8fafc;
+  --bg-glass: rgba(255, 255, 255, 0.92);
+  --border-glass: rgba(203, 213, 225, 0.9);
+  --border-glow: rgba(37, 99, 235, 0.3);
+
+  --btn-secondary-bg: rgba(15, 23, 42, 0.06);
+  --btn-secondary-hover: rgba(15, 23, 42, 0.12);
+
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-dimmed: #64748b;
+
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.12);
+  --shadow-glow: 0 0 20px rgba(37, 99, 235, 0.15);
+}
+
 /* Reset & Box Sizing */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -79,6 +97,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #root {
@@ -111,7 +130,7 @@ a {
 }
 
 a:hover {
-  color: var(--primary-100);
+  color: var(--primary-600);
 }
 
 /* Utility Containers & Grids */
@@ -178,7 +197,7 @@ a:hover {
 }
 
 .glass-card:hover {
-  border-color: rgba(255, 255, 255, 0.18);
+  border-color: var(--border-glow);
   box-shadow: var(--shadow-lg), var(--shadow-glow);
   transform: translateY(-2px);
 }
@@ -186,6 +205,12 @@ a:hover {
 /* Gradient Text Effect */
 .gradient-text {
   background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #a855f7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+[data-theme="light"] .gradient-text {
+  background: linear-gradient(135deg, #1d4ed8 0%, #0284c7 50%, #7e22ce 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -220,14 +245,14 @@ a:hover {
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--btn-secondary-bg);
   color: var(--text-primary);
   border-color: var(--border-glass);
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.25);
+  background: var(--btn-secondary-hover);
+  border-color: var(--border-glow);
 }
 
 .btn-outline {
@@ -253,14 +278,22 @@ a:hover {
 
 .badge-success {
   background: rgba(16, 185, 129, 0.15);
-  color: #34d399;
+  color: #059669;
   border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+[data-theme="dark"] .badge-success {
+  color: #34d399;
 }
 
 .badge-info {
   background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
+  color: #2563eb;
   border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+[data-theme="dark"] .badge-info {
+  color: #60a5fa;
 }
 
 /* Micro-animations */
