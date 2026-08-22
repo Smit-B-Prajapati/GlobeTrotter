@@ -6,66 +6,89 @@ import Trip from '../models/Trip.js';
  * Curated Activity Discovery Dataset
  */
 export const ACTIVITIES_CATALOG = [
+  // --- TOKYO ---
   {
-    id: 'act_eiffel_tour',
-    name: 'Eiffel Tower Summit & Garden Tour',
-    city: 'Paris',
-    description: 'Priority access to Eiffel Tower summit with guided historical narration and champagne toast.',
-    category: 'Sightseeing',
-    cost: 45,
-    duration: 120, // minutes
-    image: 'https://images.unsplash.com/photo-1543349689-9a4d426bee8e?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 'act_louvre_guided',
-    name: 'Louvre Museum Masterpieces Walk',
-    city: 'Paris',
-    description: 'Skip-the-line small group tour of Mona Lisa, Venus de Milo, and Winged Victory.',
-    category: 'Culture',
-    cost: 65,
+    id: 'act_tokyo_shibuya',
+    name: 'Shibuya Crossing & Harajuku Shopping Walk',
+    city: 'Tokyo',
+    description: 'Explore the world famous Shibuya scramble crossing, Takeshita street fashion, and boutique shops.',
+    category: 'Shopping',
+    cost: 25,
     duration: 180,
-    image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=800&q=80',
   },
   {
-    id: 'act_mumbai_street_food',
-    name: 'Juhu Beach & Chowpatty Street Food Crawl',
-    city: 'Mumbai',
-    description: 'Taste authentic Pav Bhaji, Pani Puri, Bhel Puri, and Vada Pav guided by local culinary experts.',
+    id: 'act_tokyo_teamlab',
+    name: 'teamLab Planets Immersive Digital Art Museum',
+    city: 'Tokyo',
+    description: 'Walk through water and body-immersive digital light projections and infinite crystal gardens.',
+    category: 'Culture',
+    cost: 38,
+    duration: 120,
+    image: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=800&q=80',
+  },
+  {
+    id: 'act_tokyo_tsukiji',
+    name: 'Tsukiji Outer Market Food & Fresh Sushi Tasting',
+    city: 'Tokyo',
+    description: 'Sample fresh tuna sashimi, tamagoyaki, wagyu skewers, and street seafood delicacies with local guide.',
     category: 'Food',
+    cost: 45,
+    duration: 150,
+    image: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=800&q=80',
+  },
+  {
+    id: 'act_tokyo_asakusa',
+    name: 'Senso-ji Temple & Asakusa Traditional Rickshaw Tour',
+    city: 'Tokyo',
+    description: 'Visit Tokyo oldest Buddhist temple, stroll Nakamise shopping street, and take a traditional rickshaw ride.',
+    category: 'Sightseeing',
+    cost: 35,
+    duration: 120,
+    image: 'https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?auto=format&fit=crop&w=800&q=80',
+  },
+  {
+    id: 'act_tokyo_skytree',
+    name: 'Tokyo Skytree Tembo Deck & 360 Panorama View',
+    city: 'Tokyo',
+    description: 'Ascend Japan tallest tower for breathtaking 360-degree views of Tokyo skyline and Mount Fuji.',
+    category: 'Sightseeing',
+    cost: 22,
+    duration: 90,
+    image: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=800&q=80',
+  },
+  {
+    id: 'act_tokyo_shinjuku_food',
+    name: 'Shinjuku Omoide Yokocho Izakaya & Yakitori Night',
+    city: 'Tokyo',
+    description: 'Atmospheric nightlife food crawl through lantern-lit alleyways tasting grilled yakitori & craft sake.',
+    category: 'Food',
+    cost: 50,
+    duration: 180,
+    image: 'https://images.unsplash.com/photo-1554797589-7241ab691973?auto=format&fit=crop&w=800&q=80',
+  },
+  {
+    id: 'act_tokyo_fuji_day',
+    name: 'Mount Fuji & Lake Kawaguchiko Day Excursion',
+    city: 'Tokyo',
+    description: 'Full-day scenic trip to Mount Fuji 5th Station, Chureito Pagoda, and Lake Kawaguchiko views.',
+    category: 'Nature',
+    cost: 85,
+    duration: 480,
+    image: 'https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?auto=format&fit=crop&w=800&q=80',
+  },
+  {
+    id: 'act_tokyo_akihabara',
+    name: 'Akihabara Anime, Gaming & Otaku Cultural Walk',
+    city: 'Tokyo',
+    description: 'Guided tour of retro arcade towers, manga centers, anime figures, and maid cafes in Tokyo Electric Town.',
+    category: 'Culture',
     cost: 20,
     duration: 150,
-    image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=80',
   },
-  {
-    id: 'act_gateway_heritage',
-    name: 'Gateway of India & Elephanta Caves Boat Trip',
-    city: 'Mumbai',
-    description: 'Scenic ferry ride across Mumbai Harbor to explore 5th-century rock-cut cave temples.',
-    category: 'Culture',
-    cost: 30,
-    duration: 240,
-    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 'act_goa_scuba',
-    name: 'Grande Island Scuba Diving & Snorkeling',
-    city: 'Goa',
-    description: 'Underwater scuba dive session with underwater photos, training, and PADI instructors.',
-    category: 'Adventure',
-    cost: 75,
-    duration: 300,
-    image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 'act_goa_sunset_cruise',
-    name: 'Mandovi River Sunset Cultural Cruise',
-    city: 'Goa',
-    description: 'Evening boat cruise featuring traditional Goan folk dances, music, and sunset vistas.',
-    category: 'Nature',
-    cost: 25,
-    duration: 90,
-    image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=800&q=80',
-  },
+
+  // --- KYOTO ---
   {
     id: 'act_kyoto_bamboo',
     name: 'Arashiyama Bamboo Grove & Monkey Park Walk',
@@ -87,15 +110,49 @@ export const ACTIVITIES_CATALOG = [
     image: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=800&q=80',
   },
   {
-    id: 'act_tokyo_shibuya',
-    name: 'Shibuya Crossing & Harajuku Shopping Walk',
-    city: 'Tokyo',
-    description: 'Explore the world famous Shibuya scramble crossing, Takeshita street fashion, and boutique shops.',
-    category: 'Shopping',
-    cost: 25,
+    id: 'act_kyoto_fushimi',
+    name: 'Fushimi Inari Shrine 10,000 Torii Gates Hike',
+    city: 'Kyoto',
+    description: 'Hike through sacred vermilion torii gates up Mount Inari with valley overlook views.',
+    category: 'Sightseeing',
+    cost: 10,
     duration: 180,
-    image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1478436127897-769e1b3f0f36?auto=format&fit=crop&w=800&q=80',
   },
+
+  // --- PARIS ---
+  {
+    id: 'act_eiffel_tour',
+    name: 'Eiffel Tower Summit & Garden Tour',
+    city: 'Paris',
+    description: 'Priority access to Eiffel Tower summit with guided historical narration and champagne toast.',
+    category: 'Sightseeing',
+    cost: 45,
+    duration: 120,
+    image: 'https://images.unsplash.com/photo-1543349689-9a4d426bee8e?auto=format&fit=crop&w=800&q=80',
+  },
+  {
+    id: 'act_louvre_guided',
+    name: 'Louvre Museum Masterpieces Walk',
+    city: 'Paris',
+    description: 'Skip-the-line small group tour of Mona Lisa, Venus de Milo, and Winged Victory.',
+    category: 'Culture',
+    cost: 65,
+    duration: 180,
+    image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&w=800&q=80',
+  },
+  {
+    id: 'act_paris_seine_dinner',
+    name: 'Seine River Evening Gourmet Dinner Cruise',
+    city: 'Paris',
+    description: 'Romantic glass-canopy boat cruise with 3-course French dining along illuminated monuments.',
+    category: 'Food',
+    cost: 95,
+    duration: 150,
+    image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=800&q=80',
+  },
+
+  // --- SANTORINI & BALI & MUMBAI & GOA ---
   {
     id: 'act_santorini_catamaran',
     name: 'Santorini Caldera Sunset Catamaran Cruise',
@@ -105,6 +162,36 @@ export const ACTIVITIES_CATALOG = [
     cost: 110,
     duration: 300,
     image: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=800&q=80',
+  },
+  {
+    id: 'act_bali_tegallalang',
+    name: 'Tegallalang Rice Terrace & Jungle Swing Tour',
+    city: 'Bali',
+    description: 'Soar over lush emerald rice paddies on a jungle swing and explore traditional irrigation terraces.',
+    category: 'Adventure',
+    cost: 35,
+    duration: 180,
+    image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80',
+  },
+  {
+    id: 'act_mumbai_street_food',
+    name: 'Juhu Beach & Chowpatty Street Food Crawl',
+    city: 'Mumbai',
+    description: 'Taste authentic Pav Bhaji, Pani Puri, Bhel Puri, and Vada Pav guided by local culinary experts.',
+    category: 'Food',
+    cost: 20,
+    duration: 150,
+    image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80',
+  },
+  {
+    id: 'act_goa_scuba',
+    name: 'Grande Island Scuba Diving & Snorkeling',
+    city: 'Goa',
+    description: 'Underwater scuba dive session with underwater photos, training, and PADI instructors.',
+    category: 'Adventure',
+    cost: 75,
+    duration: 300,
+    image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80',
   },
 ];
 
@@ -130,7 +217,16 @@ export const getActivityCatalog = async (req, res) => {
     }
 
     if (city) {
-      filtered = filtered.filter((a) => a.city.toLowerCase() === city.toLowerCase().trim());
+      const targetCity = city.toLowerCase().trim();
+      const firstPart = targetCity.split(',')[0].trim();
+      const cityMatches = filtered.filter(
+        (a) =>
+          targetCity.includes(a.city.toLowerCase()) ||
+          a.city.toLowerCase().includes(firstPart)
+      );
+      if (cityMatches.length > 0) {
+        filtered = cityMatches;
+      }
     }
 
     if (category && category !== 'All') {
