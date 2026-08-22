@@ -36,6 +36,9 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/trip/public/:slug" element={<PublicTripView />} />
+          <Route path="/trips/public/:slug" element={<PublicTripView />} />
+          <Route path="/public/trip/:slug" element={<PublicTripView />} />
+          <Route path="/public/trips/:slug" element={<PublicTripView />} />
 
           {/* Protected User Dashboard & Profile Routes */}
           <Route

@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import mongoose from 'mongoose';
 import Trip from '../models/Trip.js';
 import Stop from '../models/Stop.js';
 import Activity from '../models/Activity.js';
@@ -68,8 +69,12 @@ export const getPublicTripBySlug = async (req, res) => {
   try {
     const { slug } = req.params;
 
-    const trip = await Trip.findOne({ publicSlug: slug, isPublic: true }).populate('user', 'name profilePhoto');
+    let trip = await Trip.findOne({ publicSlug: slug, isPublic: true }).populate('user', 'name profilePhoto');
     
+    if (!trip && mongoose.Types.ObjectId.isValid(slug)) {
+      trip = await Trip.findOne({ _id: slug, isPublic: true }).populate('user', 'name profilePhoto');
+    }
+
     if (!trip) {
       return res.status(404).json({
         success: false,
